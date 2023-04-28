@@ -1,3 +1,12 @@
+#        Class: CMPS 3500
+#        Leader:  Stephanie Esquivel
+#        Student 2: Jose Chavez
+#        Student 3: Steven Nez
+#        Student 4: Nathan Nguyen
+#        Date:  3/29/2023
+#        File:  ClassProjectGroup1.py
+#        Description:  
+#   
 import pandas as pd
 import time
 import datetime
