@@ -36,7 +36,9 @@ Exploring Data:
 (22) Drop Columns:
 (23) Describe Columns:
 (24) Search Element in Column:
-(25) Back to Main Menu
+(25) Sort any numerical and non-numerical columns (Ascending or Descending):
+(26) Print the first 100, 1000 or 5000 rows:
+(27) Back to Main Menu
 """
 
 # define the file options to load
@@ -51,7 +53,6 @@ Load data set:
 # initialize variables
 df = None
 
-# define functions for menu options
 # ------------------- define functions for menu options -----------------------------
 
 def load_data():
@@ -80,7 +81,6 @@ def load_data():
 
     # -------------------------- Print Statements -----------------------------
    
-    print(newdf)
     print(now.strftime("[%H:%M:%S]") + f" Total Columns Read: {len(df.columns)}")
     print(now.strftime("[%H:%M:%S]") + f" Total Rows Read:", len(newdf))
     print(f"\nFile loaded successfully! Time to load: {end_time-start_time:.2f} sec.")
