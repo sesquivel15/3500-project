@@ -185,7 +185,13 @@ while True:
             print("\nPlease load a data set first!")
         else:
             explore_data()
-    # __________________ Quit Program __________
+    # __________ Print Data Set __________
+    elif action == "4":
+        if df is None:
+            print("\nPlease load a data set first!")
+        else:
+            print(pd.DataFrame(df))
+    # __________________ Quit Program _________
     
     elif action == "5":
         break
