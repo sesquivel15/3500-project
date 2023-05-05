@@ -117,14 +117,22 @@ def explore_data():
 #___________________ (23) Describe specified column data ____________________
         
         elif action == "23":
+         #   print("\nSelect column number to Describe:\n" + "\n".join([f"[{i}] {col}" for i, col in enumerate(df.columns, start=1)]) + "\n")
+          #  col_num = input(now.strftime("[%H:%M:%S]") + " ")
+           # print("Column " + col_num + " stats: \n============")
+            #col_num = int(col_num)
+           # if col_num > 0:
+            #    column2_stats = df['col_num'].describe()
+             #   print(column2_stats)
             print("\nSelect column number to Describe:\n" + "\n".join([f"[{i}] {col}" for i, col in enumerate(df.columns, start=1)]) + "\n")
-            col_num = input(now.strftime("[%H:%M:%S]") + " ")
-            print("Column " + col_num + " stats: \n============")
-            if col_num == "1":
-                nums = df.count()[1]
-                nums == df[df.columns[1]].count()
-                print("Count: ", nums)
-            
+            col_num = int(input(now.strftime("[%H:%M:%S]") + " "))
+            print("Column " + str(col_num) + " stats: \n============")
+            if col_num > 0 and col_num <= len(df.columns):
+                column_name = df.columns[col_num - 1]
+                column_stats = df[column_name].describe()
+                print(column_stats)
+            else:
+                print("Invalid column number. Please try again.")
 # ______________ (24) Search for Specific Element ____________________
   
 
