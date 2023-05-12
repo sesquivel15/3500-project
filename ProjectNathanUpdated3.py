@@ -283,10 +283,21 @@ def q7(df):
     # # grouped_df = df('year','Crm Cd Desc').size().reset_index(name='Count')
     # # sorted_df = grouped_df.sort_values(by='Count', ascending=False)
 
-    # Calculate the sum of each crime type
-    crime_counts = df.groupby('year','Crm Cd Desc').size().reset_index(name='total_count')
-    top_crimes = crime_counts.sort_values(by='total_count', ascending=False).head(10)
-    print(top_crimes)
+    # Calculate the sum of each crime type TOTAL AMOUNT
+    # crime_counts = df.groupby('year','Crm Cd Desc').size().reset_index(name='total_count')
+    # top_crimes = crime_counts.sort_values(by='total_count', ascending=False).head(10)
+    # print(top_crimes)
+
+    crime_counts = df.groupby(['year', 'Crm Cd Desc']).size().reset_index(name='total_count')
+
+    # Sort the crime counts in descending order and list the top 10 crimes for PER YEAR
+    for year in df['year'].unique():
+        print(f'Top 10 most common crime types for year {year}:')
+        year_crime_counts = crime_counts[crime_counts['year'] == year].sort_values(by='total_count', ascending=False).head(10)
+        print(year_crime_counts)
+        #print()
+
+
 
 def q10(df):
     filtered_df = df[(df['Vict Age'] >= 65) & (df['Vict Sex'] == 'M') & (df['year'] == 2018)]
