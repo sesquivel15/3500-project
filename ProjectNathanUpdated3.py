@@ -62,8 +62,94 @@ Load data set:
 # initialize variables
 df = None
 
-# ------------------- define functions for menu options -----------------------------
 
+def count_unique_elements(df, col):
+    if df[col].dtype == 'object':
+        arr = df[col].tolist()
+    else:
+        arr = drop_zero(create_array(df, col))
+    unique_elements = set(arr)
+    unique_count = len(unique_elements)
+    return unique_count
+
+
+
+def average(df, col):
+    arr = create_array(df, col)
+    arr = drop_zero(arr)
+    summation = 0
+    count = len(arr)
+    i = 0
+    while i < count:
+        summation += arr[i]
+        i += 1
+    ave = summation/count
+    return ave
+
+
+def find_mode(df, col):
+    arr = create_array(df, col)
+    arr = drop_zero(arr)
+    c = Counter(arr)
+    return [k for k, v in c.items() if v == c.most_common(1)[0][1]]
+
+
+
+def variance(df, col):
+    arr = create_array(df, col)
+    arr = drop_zero(arr)
+    ave = average(df, col)
+    pop_size = len(arr)
+    summation = 0
+    i = 0
+    while i < pop_size:
+        value = arr[i]
+        summation += (value - ave)**2
+        i += 1
+    variance = (summation/pop_size)
+    return variance
+
+# Standarad Deviation (SD)
+
+
+def standard_deviation(df, col):
+    radicand = var(df, col)
+    sd = radicand**(1/2)
+    return sd
+
+# Min function
+
+
+def minimum(df, col):
+    arr = create_array(df, col)
+    arr = drop_zero(arr)
+    max = len(arr) - 1
+    min = arr[0]
+    i = 0
+    while i <= max:
+        if arr[i] < min:
+            min = arr[i]
+        i += 1
+    return min
+
+def maximum(df, col):
+    arr = create_array(df, col)
+    arr = drop_zero(arr)
+    end = len(arr) - 1
+    maxx = arr[0]
+    i = 0
+    while i <= end:
+        if arr[i] > maxx:
+            maxx = arr[i]
+        i += 1
+    return maxx
+
+
+def med(df, col):
+    low = minimum(df, col)
+    high = maximum(df, col)
+    med = (high + low) / 2
+    return med
 def load_data():
 
     global df
@@ -132,13 +218,6 @@ def explore_data():
 #___________________ (23) Describe specified column data ____________________
 
         elif action == "23":
-            #   print("\nSelect column number to Describe:\n" + "\n".join([f"[{i}] {col}" for i, col in enumerate(df.columns, start=1)]) + "\n")
-          #  col_num = input(now.strftime("[%H:%M:%S]") + " ")
-           # print("Column " + col_num + " stats: \n============")
-            #col_num = int(col_num)
-           # if col_num > 0:
-            #    column2_stats = df['col_num'].describe()
-             #   print(column2_stats)
             print("\nSelect column number to Describe:\n" + "\n".join([f"[{i}] {col}" for i, col in enumerate(df.columns, start=1)]) + "\n")
             while True:
                 try:
@@ -150,12 +229,58 @@ def explore_data():
                 except ValueError:
                     print("Inavlid Input. Enter a valid column")
             print("Column " + str(col_num) + " stats: \n============")
-            #if col_num > 0 and col_num <= len(df.columns):
-            column_name = df.columns[col_num - 1]
-            column_stats = df[column_name].describe()
-            print(column_stats)
-            #else:
-             #   print("Invalid column number. Please try again.")
+            column_index = col_num - 1
+
+            cols = df.columns
+            col = cols[column_index]
+            start_time = time.time()
+            try:
+                count = count(df, col)
+                print("Count: ", count)
+            except:
+                print("Count: N/A")
+            try:
+                unique_count = count_unique_elements(df, col)
+                print("unique Count: ", unique_count)
+            except:
+                print("Unique Count: N/A")
+            try:
+                mean = average(df, col)
+                print("Mean: ", mean)
+            except:
+                print("Mean: N/A")
+            try:
+                Med = med(df, col)
+                print("Median: ", Med)
+            except:
+                print("Median: N/A")
+            try:
+                Mode = fine_mode(df, col)
+                print("Mode: ", Mode)
+            except:
+                print("Mode: N/A")
+            try:
+                SD = standard_deviantion(df, col)
+                print("Standard Deviation (SD): ", SD)
+            except:
+                print("Standard Deviation (SD): N/A")
+            try:
+                Var = variance(df, col)
+                print("Variance: ", Var)
+            except:
+                print("Variance: N/A")
+            try:
+                MIN = minimum(df, col)
+                print("Minimum: ", MIN)
+            except:
+                print("Minimum: N/A")
+            try:
+                MAX = maximum(df, col)
+                print("Maximum: ", MAX)
+            except:
+                print("Maximum: N/A")
+            end_time = time.time()
+            print(f"Stats printed successfull! time to proccess is {end_time-start_time:.2f} sec.")
 # ______________ (24) Search for Specific Element ____________________
         elif action == "24":
             print("\nSelect column number to search within:\n" + "\n".join([f"[{i}] {col}" for i, col in enumerate(df.columns, start=1)]) + "\n")
@@ -251,8 +376,13 @@ def q3(df):
     sorted_counts = unique_crime_counts.sort_values(ascending=True)
     print("\nUnique count of crimes for all months (sorted in increasing order):")
     print(sorted_counts)
-
 def q4(df):
+    counts = df['AREA NAME'].value_counts()
+
+    top_10 = pd.DataFrame({'AREA NAME': counts.index[:10], 'Count': counts.values[:10]})
+
+    print(top_10)
+def q5(df):
     hollywood_df = df[df['AREA NAME'] == 'Hollywood'].copy()
     hollywood_df.loc[:, 'TIME OCC'] = hollywood_df['TIME OCC'].astype(str)
     hollywood_df.loc[:, 'Hour'] = hollywood_df['TIME OCC'].apply(lambda x: int(x[:2]) if x.isdigit() and len(x) >= 2 else -1)
@@ -264,7 +394,7 @@ def q4(df):
     for hour, count in top_5_dangerous_times.iteritems():
         print(f"Hour: {hour}, Total Crimes: {count}")
 
-def q5(df):
+def q6(df):
     df['Date Rptd'] = pd.to_datetime(df['Date Rptd'])
     df['DATE OCC'] = pd.to_datetime(df['DATE OCC'])
     df['Report Time Difference'] = (df['Date Rptd'] - df['DATE OCC']).dt.days
@@ -298,7 +428,38 @@ def q7(df):
         #print()
 
 
+def q8(df):
 
+    # df.index = pd.to_datetime(df.index)
+
+    # la_df = df.loc[df['AREA NAME'] == 'LOS ANGELES']
+
+    # filtered_df = la_df.between_time('11:00:00', '13:00:00')
+
+    # counts_time_range = filtered_df['Vict Sex'].value_counts()
+    # counts_total = la_df['Vict Sex'].value_counts()
+
+    # Print the results
+    # print("Occurrences during specified time range:")
+    # print(counts_time_range)
+    # print("Occurrences in entire LA DataFrame:")
+    # print(counts_total)
+
+    
+    df.index = pd.to_datetime(df.index)
+
+    filtered_df = df.between_time('11:00:00', '13:00:00')
+
+    counts_time_range = filtered_df['Vict Sex'].value_counts()
+
+    counts_total = df['Vict Sex'].value_counts()
+
+
+    print("Occurrences during specified time range:")
+    print(counts_time_range)
+    print("Occurrences in entire DataFrame:")
+    print(counts_total)
+    print("Men are likely to be more of a victim")
 def q10(df):
     filtered_df = df[(df['Vict Age'] >= 65) & (df['Vict Sex'] == 'M') & (df['year'] == 2018)]
     grouped_df = filtered_df.groupby('Premis Desc').size().reset_index(name='Count')
@@ -343,6 +504,11 @@ def dataAnalysis():
         except (RuntimeError, TypeError, NameError, KeyError,ValueError): 
             print("Error in q5 function. Please reload data to see this information")
             break
+        try:
+            an6 = q6(df)               
+        except (RuntimeError, TypeError, NameError, KeyError,ValueError): 
+            print("Error in q8 function. Please reload data to see this information")
+            break
 
         try:
             an7 = q7(df)               
@@ -350,7 +516,11 @@ def dataAnalysis():
             print("Error in q7 function. Please reload data to see this information")
             break
 
-        
+        try:
+            an8 = q8(df)               
+        except (RuntimeError, TypeError, NameError, KeyError,ValueError): 
+            print("Error in q8 function. Please reload data to see this information")
+            break
 
         try:
             an10 = q10(df)
@@ -409,62 +579,3 @@ while True:
         print("\nInvalid option selected.")
 
 
-# ________________ Sorting Functions _____________
-
-#_______ Counting rows function ________
-def Count(iterable):
-    count = 0
-    for row in iterable:
-        count += 1
-    return count
-
-#_______ Counting Unique Items _______
-def UniqueCount(iterable):
-    unique_rows = set()
-    for row in iterable:
-        # Assuming row is a list or tuple, convert it to a string to make it hashable
-        row_string = str(row)
-        unique_rows.add(row_string)
-    return len(unique_rows)
-
-#________ Determining the Mean of given item ________
-def Mean(arr):
-    return sum(arr) / len(arr)
-
-# _______ Median of given item _______
-def Median(arr):
-    arr.sort()
-    n = len(arr)
-    if n % 2 == 0:
-        return (arr[n//2 - 1] + arr[n//2]) / 2
-    else:
-        return arr[n//2]
-
-# ________ Mode of given item ______
-def Mode(arr):
-    count_dict = {}
-    for item in arr:
-        count_dict[item] = count_dict.get(item, 0) + 1
-    max_count = max(count_dict.values())
-    return [item for item, freq in count_dict.items() if freq == max_count]
-
-# _______ Used in Standard Deveation function ______
-def square_root(value):
-    return value ** 0.5
-
-# _______ Standard Deviation of Item_______
-def SD(arr):
-    mean = Mean(arr)
-    return square_root(sum([(x - mean)**2 for x in arr]) / len(arr))
-
-#________ Measure of Variability _______
-def Variance(arr):
-    return SD(arr)**2
-
-#________ Finding Minimum ______
-def Min(arr):
-    return min(arr)
-
-#________ Finding Maximum ______
-def Maximum(arr):
-    return max(arr)
